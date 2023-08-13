@@ -2,7 +2,7 @@ include { BCFTOOLS_SORT                      } from '../../../modules/nf-core/bc
 include { GATK4_MERGEVCFS as MERGE_FREEBAYES } from '../../../modules/nf-core/gatk4/mergevcfs/main'
 include { FREEBAYES                          } from '../../../modules/nf-core/freebayes/main'
 include { TABIX_TABIX as TABIX_VC_FREEBAYES  } from '../../../modules/nf-core/tabix/tabix/main'
-include { VCF_VARIANT_FILTERING_FREEBAYES    } from '/home/lucianhu/.nextflow/assets/nf-core/sarek/subworkflows/local/bam_variant_calling_freebayes/vcf_variant_filtering_freebayes/main.nf'
+include { GATK4_FILTERVARIANTFREEBAYES as FILTERVARIANTFREEBAYES } from '/home/lucianhu/.nextflow/assets/nf-core/sarek/modules/nf-core/freebayes/filtervariantfreebayes/main.nf'
 
 workflow BAM_VARIANT_CALLING_FREEBAYES {
     take:
@@ -46,14 +46,14 @@ workflow BAM_VARIANT_CALLING_FREEBAYES {
         .mix(TABIX_VC_FREEBAYES.out.tbi)
 
     // Call the VCF_VARIANT_FILTERING_FREEBAYES process
-    VCF_VARIANT_FILTERING_FREEBAYES(
+    FILTERVARIANTFREEBAYES(
         freebayes_vcf.join(freebayes_tbi, failOnDuplicate: true, failOnMismatch: true),
         fasta,
         fasta_fai,
         dict.map{ meta, dict -> [ dict ] }
     )
 
-    vcf = VCF_VARIANT_FILTERING_FREEBAYES.out.vcf
+    vcf = FILTERVARIANTFREEBAYES.out.vcf
 
     // add variantcaller to meta map and remove no longer necessary field: num_intervals
     vcf = vcf.map{ meta, vcf -> [ meta - meta.subMap('num_intervals') + [ variantcaller:'freebayes' ], vcf ] }
