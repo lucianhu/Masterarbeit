@@ -27,9 +27,9 @@ aria2c -x8 https://ftp.ensembl.org/pub/rapid-release/species/Homo_sapiens/GCA_00
 gunzip *.gz
 
 # Download ClinVar
-aria2c -x8 https://ftp.ensembl.org/pub/rapid-release/species/Homo_sapiens/GCA_009914755.4/ensembl/variation/2022_10/vcf/Homo_sapiens-GCA_009914755.4-2022_10-clinvar.vcf.gz -o chm13v2.0_ClinVar.vcf.gz
-gzip -d chm13v2.0_ClinVar.vcf.gz
-bgzip chm13v2.0_ClinVar.vcf && tabix -p vcf chm13v2.0_ClinVar.vcf.gz
+aria2c -x8 https://s3-us-west-2.amazonaws.com/human-pangenomics/T2T/CHM13/assemblies/annotation/liftover/chm13v2.0_ClinVar20220313.vcf.gz -o CHM13.2.clinvar.vcf.gz
+gzip -d CHM13.2.clinvar.vcf.gz
+bgzip CHM13.2.clinvar.vcf && tabix -p vcf CHM13.2.clinvar.vcf.gz
 
 # Uncompress:
 # Why do we need to uncompress?
@@ -45,4 +45,4 @@ bgzip chm13v2.0_ClinVar.vcf && tabix -p vcf chm13v2.0_ClinVar.vcf.gz
 # CHM13.2.reference: https://projects.ensembl.org/hprc/
 
 # Now we are ready to build the database
-java -Xmx20g -jar $HOME/DNA_softwares/snpEff/snpEff.jar build -v CHM13.2 2>&1 | tee CHM13.2.build
+java -Xmx20g -jar $HOME/DNA_softwares/snpEff/snpEff.jar build -v CHM13.2 -noCheckProtein 2>&1 | tee CHM13.2.build
