@@ -1,0 +1,10 @@
+input: '/home/lucianhu/masterarbeitlocal/sarek/samplesheet.csv'
+outdir: '/home/lucianhu/masterarbeitlocal/sarek/CHM13'
+wes: true
+intervals: '/mnt/sda/Masterarbeit/Homo_sapiens/CHM13/Annotation/intervals/sorted_CHM13-exome-interval.bed'
+tools: 'deepvariant,freebayes,haplotypecaller,strelka,snpeff'
+genome: 'CHM13'
+igenomes_base: '/mnt/sda/Masterarbeit'
+max_memory: '62.GB'
+multiqc_title: 'CHM13'
+

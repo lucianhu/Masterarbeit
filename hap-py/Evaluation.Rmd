@@ -1,0 +1,320 @@
+---
+title: "Benchmarks_Evaluation"
+output: html_document
+date: "2023-08-22"
+---
+
+```{r setup, include=FALSE}
+library(happyR)
+library(tidyverse, quietly = TRUE)
+```
+
+CMRG v1.00: Alignment of HG002 to HG19
+
+```{r cars}
+setwd("/home/lucianhu/masterarbeitlocal/Benchmarks/HG19/HG002/CMRG")
+# groups are defined either by a CSV or data.frame with three 
+# required columns: a label for each group (group_id), a unique
+# label per replicate (replicate_id) and a path to the respective
+# pre-computed hap.py output (happy_prefix)
+extdata_dir <- system.file("extdata", package = "happyR")
+# these extdata files are supplied with the package
+samplesheet <- tibble::tribble(
+  ~group_id,  ~replicate_id, ~happy_prefix,
+  "deepvariant", "HG002_SRR2962669", "HG002_SRR2962669.deepvariant.reports",
+  "haplotypecaller", "HG002_SRR2962669", "HG002_SRR2962669.haplotypecaller.filtered.reports",
+  "strelka", "HG002_SRR2962669", "HG002_SRR2962669.strelka.variants.reports"
+)
+
+# here the above table is used to read hap.py output files from disk 
+# and attach the group + replicate metadata
+hap_samplesheet <- read_samplesheet_(samplesheet)
+
+summary_cmrd_hg19 <- extract_results(hap_samplesheet$results, table = "summary") %>% 
+  inner_join(samplesheet, by = "happy_prefix") %>% 
+  filter(Filter == "PASS")
+
+# Extract specific columns
+selected_columns <- summary_cmrd_hg19 %>%
+  select(group_id, Type, Filter, TRUTH.TOTAL, TRUTH.TP, TRUTH.FN, QUERY.TOTAL, QUERY.FP, QUERY.UNK, FP.gt, FP.al, METRIC.Recall, METRIC.Precision, METRIC.Frac_NA, METRIC.F1_Score )
+
+# Print the selected columns (optional)
+print(selected_columns)
+
+# Save the selected columns to a CSV file
+csv_filename <- "CMRGv1.00_Alignment_of_HG002_to_HG19.csv"
+write.csv(selected_columns, file = csv_filename, row.names = FALSE)
+cat("Selected columns saved to", csv_filename, "\n")
+
+# Create a plot
+plot <- ggplot(data = summary_cmrd_hg19, aes(x = METRIC.Recall, y = METRIC.Precision, color = group_id, shape = Type)) +
+  geom_point(size = 5) +
+  theme_minimal() + 
+  xlim(NA, 1) + ylim(NA, 1) +
+  scale_color_brewer(palette = "Set1") +
+  labs(x = "Recall", y = "Precision", color = "Tools", shape = "Types") +
+  ggtitle("CMRG v1.0: Alignment of HG002 to HG19") +
+  theme(legend.title = element_text(size = 16),
+        legend.text = element_text(size = 12),
+        plot.title = element_text(size = 20))  # Adjust the size of the plot title
+
+# Save the plot as a PNG image
+image_filename <- "CMRG_v1.00_Alignment_of_HG002_to_HG19.png"
+ggsave(image_filename, plot, width = 8, height = 6, dpi = 300)  # Adjust width, height, and dpi as needed
+cat("Plot saved as", image_filename, "\n")
+```
+
+CMRG v1.00: Alignment of HG002 to HG38
+
+```{r cars}
+setwd("/home/lucianhu/masterarbeitlocal/Benchmarks/HG38/HG002/CMRG")
+# groups are defined either by a CSV or data.frame with three 
+# required columns: a label for each group (group_id), a unique
+# label per replicate (replicate_id) and a path to the respective
+# pre-computed hap.py output (happy_prefix)
+extdata_dir <- system.file("extdata", package = "happyR")
+# these extdata files are supplied with the package
+samplesheet <- tibble::tribble(
+  ~group_id,  ~replicate_id, ~happy_prefix,
+  "deepvariant", "HG002_SRR2962669", "HG002_SRR2962669.deepvariant.reports",
+  "haplotypecaller", "HG002_SRR2962669", "HG002_SRR2962669.haplotypecaller.filtered.reports",
+  "strelka", "HG002_SRR2962669", "HG002_SRR2962669.strelka.variants.reports"
+)
+
+# here the above table is used to read hap.py output files from disk 
+# and attach the group + replicate metadata
+hap_samplesheet <- read_samplesheet_(samplesheet)
+
+summary_cmrd_hg38 <- extract_results(hap_samplesheet$results, table = "summary") %>% 
+  inner_join(samplesheet, by = "happy_prefix") %>% 
+  filter(Filter == "PASS")
+
+# Extract specific columns
+selected_columns <- summary_cmrd_hg38 %>%
+  select(group_id, Type, Filter, TRUTH.TOTAL, TRUTH.TP, TRUTH.FN, QUERY.TOTAL, QUERY.FP, QUERY.UNK, FP.gt, FP.al, METRIC.Recall, METRIC.Precision, METRIC.Frac_NA, METRIC.F1_Score )
+
+# Print the selected columns (optional)
+print(selected_columns)
+
+# Save the selected columns to a CSV file
+csv_filename <- "CMRGv1.00_Alignment_of_HG002_to_HG38.csv"
+write.csv(selected_columns, file = csv_filename, row.names = FALSE)
+cat("Selected columns saved to", csv_filename, "\n")
+
+# Create a plot
+plot <- ggplot(data = summary_cmrd_hg38, aes(x = METRIC.Recall, y = METRIC.Precision, color = group_id, shape = Type)) +
+  geom_point(size = 5) +
+  theme_minimal() + 
+  xlim(NA, 1) + ylim(NA, 1) +
+  scale_color_brewer(palette = "Set1") +
+  labs(x = "Recall", y = "Precision", color = "Tools", shape = "Types") +
+  ggtitle("CMRG v1.0: Alignment of HG002 to HG38") +
+  theme(legend.title = element_text(size = 16),
+        legend.text = element_text(size = 12),
+        plot.title = element_text(size = 20))  # Adjust the size of the plot title
+
+# Save the plot as a PNG image
+image_filename <- "CMRG_v1.00_Alignment_of_HG002_to_HG38.png"
+ggsave(image_filename, plot, width = 8, height = 6, dpi = 300)  # Adjust width, height, and dpi as needed
+cat("Plot saved as", image_filename, "\n")
+```
+
+CMRG v1.00: Alignment of HG002 to CHM13
+
+```{r cars}
+setwd("/home/lucianhu/masterarbeitlocal/Benchmarks/CHM13/HG002/CMRG")
+# groups are defined either by a CSV or data.frame with three 
+# required columns: a label for each group (group_id), a unique
+# label per replicate (replicate_id) and a path to the respective
+# pre-computed hap.py output (happy_prefix)
+extdata_dir <- system.file("extdata", package = "happyR")
+# these extdata files are supplied with the package
+samplesheet <- tibble::tribble(
+  ~group_id,  ~replicate_id, ~happy_prefix,
+  "deepvariant", "HG002_SRR2962669", "HG002_SRR2962669.deepvariant.reports",
+  "haplotypecaller", "HG002_SRR2962669", "HG002_SRR2962669.haplotypecaller.filtered.reports",
+  "strelka", "HG002_SRR2962669", "HG002_SRR2962669.strelka.variants.reports"
+)
+
+# here the above table is used to read hap.py output files from disk 
+# and attach the group + replicate metadata
+hap_samplesheet <- read_samplesheet_(samplesheet)
+
+summary_cmrd_chm13 <- extract_results(hap_samplesheet$results, table = "summary") %>% 
+  inner_join(samplesheet, by = "happy_prefix") %>% 
+  filter(Filter == "PASS")
+
+# Extract specific columns
+selected_columns <- summary_cmrd_chm13 %>%
+  select(group_id, Type, Filter, TRUTH.TOTAL, TRUTH.TP, TRUTH.FN, QUERY.TOTAL, QUERY.FP, QUERY.UNK, FP.gt, FP.al, METRIC.Recall, METRIC.Precision, METRIC.Frac_NA, METRIC.F1_Score )
+
+# Print the selected columns (optional)
+print(selected_columns)
+
+# Save the selected columns to a CSV file
+csv_filename <- "CMRGv1.00_Alignment_of_HG002_to_CHM13.csv"
+write.csv(selected_columns, file = csv_filename, row.names = FALSE)
+cat("Selected columns saved to", csv_filename, "\n")
+
+# Create a plot
+plot <- ggplot(data = summary_cmrd_chm13, aes(x = METRIC.Recall, y = METRIC.Precision, color = group_id, shape = Type)) +
+  geom_point(size = 5) +
+  theme_minimal() + 
+  coord_cartesian(xlim = c(0, 0.8), ylim = c(0.2, 0.8)) +  # Set the axis limits
+  scale_color_brewer(palette = "Set1") +
+  labs(x = "Recall", y = "Precision", color = "Tools", shape = "Types") +
+  ggtitle("CMRG v1.0: Alignment of HG002 to T2T-CHM13v2.0") +
+  theme(legend.title = element_text(size = 16),
+        legend.text = element_text(size = 12),
+        plot.title = element_text(size = 20))  # Adjust the size of the plot title
+
+# Save the plot as a PNG image
+image_filename <- "CMRG_v1.00_Alignment_of_HG002_to_CHM13.png"
+ggsave(image_filename, plot, width = 8, height = 6, dpi = 300)  # Adjust width, height, and dpi as needed
+cat("Plot saved as", image_filename, "\n")
+```
+
+CMRG v1.0: Comparing TRUTH.TP for HG002 in 3 Reference Genomes with DeepVariant
+
+```{r cars}
+setwd("/home/lucianhu/masterarbeitlocal/Benchmarks/CHM13/HG002/CMRG")
+# Select the relevant columns and add a new 'HRG' column identify the Human Reference Genome.
+
+selected_deepvariant_hg19 <- summary_cmrd_hg19 %>%
+  filter(group_id == "deepvariant") %>%
+  select(Type, TRUTH.TP) %>%
+  mutate(HRG = "HG19")
+selected_deepvariant_hg19
+
+selected_deepvariant_hg38 <- summary_cmrd_hg38 %>%
+  filter(group_id == "deepvariant") %>%
+  select(Type, TRUTH.TP)  %>% 
+  mutate(HRG = "HG38")
+selected_deepvariant_hg38
+
+selected_deepvariant_chm13 <- summary_cmrd_chm13 %>%
+  filter(group_id == "deepvariant") %>%
+  select(Type, TRUTH.TP) %>% 
+  mutate(HRG = "T2T-CHM13v2.0")
+selected_deepvariant_chm13
+
+# Merge the three dataframes into a single dataframe 'merged_data'.
+merged_data <- bind_rows(
+  selected_deepvariant_hg19,
+  selected_deepvariant_hg38,
+  selected_deepvariant_chm13
+)
+
+# Create a double column graph using 'ggplot2' library with a custom title and other visual properties.
+plot_deepvariant <- ggplot(merged_data, aes(x = HRG, fill = Type)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.5), aes(y = TRUTH.TP), width = 0.35) +
+  geom_text(aes(label = TRUTH.TP, y = TRUTH.TP), position = position_dodge(width = 0.7), vjust = -0.5) +
+  labs(x = "Human Reference Genome", y = "TRUTH.TP", fill = "Type",
+       title = "CMRG v1.0: Comparing TRUTH.TP for HG002 in 3 Reference Genomes 
+       with DeepVariant") +
+  scale_y_continuous(limits = c(0, max(merged_data$TRUTH.TP, na.rm = TRUE) + 10)) +
+  scale_fill_brewer(palette = "Set1") +  # Choose a color palette for 'Type'
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability.
+
+# Save the plot as a PNG image
+image_filename <- "CMRG_v1.00_deepvariant.png"
+ggsave(image_filename, plot_deepvariant, width = 8, height = 6, dpi = 300)  # Adjust width, height, and dpi as needed
+cat("Plot saved as", image_filename, "\n")
+```
+CMRG v1.0: Comparing TRUTH.TP for HG002 in 3 Reference Genomes with GATK Haplotypecaller
+
+```{r cars}
+setwd("/home/lucianhu/masterarbeitlocal/Benchmarks/CHM13/HG002/CMRG")
+# Select the relevant columns and add a new 'HRG' column identify the Human Reference Genome.
+selected_haplotypecaller_hg19 <- summary_cmrd_hg19 %>%
+  filter(group_id == "haplotypecaller") %>%
+  select(Type, TRUTH.TP)  %>% 
+  mutate(HRG = "HG19")
+selected_haplotypecaller_hg19
+
+selected_haplotypecaller_hg38 <- summary_cmrd_hg38 %>%
+  filter(group_id == "haplotypecaller") %>%
+  select(Type, TRUTH.TP)  %>% 
+  mutate(HRG = "HG38")
+selected_haplotypecaller_hg38
+
+selected_haplotypecaller_chm13 <- summary_cmrd_chm13 %>%
+  filter(group_id == "haplotypecaller") %>%
+  select(Type, TRUTH.TP) %>% 
+  mutate(HRG = "T2T-CHM13v2.0")
+selected_haplotypecaller_chm13
+
+# Merge the three dataframes into a single dataframe 'merged_data'.
+merged_data_haplotypecaller <- bind_rows(
+  selected_haplotypecaller_hg19,
+  selected_haplotypecaller_hg38,
+  selected_haplotypecaller_chm13
+)
+merged_data_haplotypecaller
+
+# Create a double column graph using 'ggplot2' library with a custom title and other visual properties.
+plot_gatk <- ggplot(merged_data_haplotypecaller, aes(x = HRG, fill = Type)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.5), aes(y = TRUTH.TP), width = 0.35) +
+  geom_text(aes(label = TRUTH.TP, y = TRUTH.TP), position = position_dodge(width = 0.7), vjust = -0.5) +
+  labs(x = "Human Reference Genome", y = "TRUTH.TP", fill = "Type",
+       title = "CMRG v1.0: Comparing TRUTH.TP for HG002 in 3 Reference Genomes 
+       with GATK Haplotypecaller") +
+  scale_y_continuous(limits = c(0, max(merged_data$TRUTH.TP, na.rm = TRUE) + 10)) +
+  scale_fill_brewer(palette = "Set1") +  # Choose a color palette for 'Type'
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability.
+
+# Save the plot as a PNG image
+image_filename <- "CMRG_v1.00_gatk.png"
+ggsave(image_filename, plot_gatk, width = 8, height = 6, dpi = 300)  # Adjust width, height, and dpi as needed
+cat("Plot saved as", image_filename, "\n")
+```
+CMRG v1.0: Comparing TRUTH.TP for HG002 in 3 Reference Genomes with Strelka2
+
+```{r cars}
+setwd("/home/lucianhu/masterarbeitlocal/Benchmarks/CHM13/HG002/CMRG")
+# Select the relevant columns and add a new 'HRG' column identify the Human Reference Genome.
+selected_strelka_hg19 <- summary_cmrd_hg19 %>%
+  filter(group_id == "strelka") %>%
+  select(Type, TRUTH.TP)  %>% 
+  mutate(HRG = "HG19")
+selected_haplotypecaller_hg19
+
+selected_strelka_hg38 <- summary_cmrd_hg38 %>%
+  filter(group_id == "strelka") %>%
+  select(Type, TRUTH.TP)  %>% 
+  mutate(HRG = "HG38")
+selected_strelka_hg38
+
+selected_strelka_chm13 <- summary_cmrd_chm13 %>%
+  filter(group_id == "strelka") %>%
+  select(Type, TRUTH.TP) %>% 
+  mutate(HRG = "T2T-CHM13v2.0")
+selected_strelka_chm13
+
+# Merge the three dataframes into a single dataframe 'merged_data'.
+merged_data_strelka <- bind_rows(
+  selected_strelka_hg19,
+  selected_strelka_hg38,
+  selected_strelka_chm13
+)
+merged_data_strelka
+
+# Create a double column graph using 'ggplot2' library with a custom title and other visual properties.
+plot_strelka <- ggplot(merged_data_strelka, aes(x = HRG, fill = Type)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.5), aes(y = TRUTH.TP), width = 0.35) +
+  geom_text(aes(label = TRUTH.TP, y = TRUTH.TP), position = position_dodge(width = 0.7), vjust = -0.5) +
+  labs(x = "Human Reference Genome", y = "TRUTH.TP", fill = "Type",
+       title = "CMRG v1.0: Comparing TRUTH.TP for HG002 in 3 Reference Genomes 
+       with Strelka2") +
+  scale_y_continuous(limits = c(0, max(merged_data$TRUTH.TP, na.rm = TRUE) + 10)) +
+  scale_fill_brewer(palette = "Set1") +  # Choose a color palette for 'Type'
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability.
+
+# Save the plot as a PNG image
+image_filename <- "CMRG_v1.00_strelka.png"
+ggsave(image_filename, plot_strelka, width = 8, height = 6, dpi = 300)  # Adjust width, height, and dpi as needed
+cat("Plot saved as", image_filename, "\n")
+```

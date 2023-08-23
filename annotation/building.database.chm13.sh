@@ -29,7 +29,6 @@ aria2c -x8 https://ftp.ensembl.org/pub/rapid-release/species/Homo_sapiens/GCA_00
 gunzip *.gz
 
 # Download Ensemble-ClinVar
-
 aria2c -x8 https://ftp.ensembl.org/pub/rapid-release/species/Homo_sapiens/GCA_009914755.4/ensembl/variation/2022_10/vcf/Homo_sapiens-GCA_009914755.4-2022_10-clinvar.vcf.gz
 
 ## Fix ClinVar file

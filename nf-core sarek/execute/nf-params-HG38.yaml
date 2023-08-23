@@ -1,0 +1,12 @@
+input: '/home/lucianhu/masterarbeitlocal/sarek/samplesheet.csv'
+outdir: '/home/lucianhu/masterarbeitlocal/sarek/HG38'
+wes: true
+intervals: '/mnt/sda/Masterarbeit/Homo_sapiens/GATK/GRCh38/Annotation/intervals/sorted_hg38-exome-interval.bed'
+tools: 'deepvariant,haplotypecaller,strelka,snpeff'
+save_mapped: true
+genome: 'GATK.GRCh38'
+igenomes_base: '/mnt/sda/Masterarbeit'
+max_memory: '62.GB'
+multiqc_title: 'HG38'
+
+
