@@ -11,7 +11,7 @@ Under the Guidance of Dr. Phuc Loi Luu of “on-site Supervisor” and Prof. Dr.
 
 Mannheim, February 2024 
 
-This repository contains scripts used to reproduce our work
+This repository contains scripts used to reproduce our work.
 
 # Workflow Description
 The scripts are designed to be run in the order listed below:
