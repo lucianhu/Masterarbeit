@@ -15,7 +15,7 @@ This repository contains scripts used to reproduce our work.
 
 # Workflow Description
 The scripts are designed to be run in the order listed below:
-- Download raw data associated with Hereditary Breast and Ovarian Cancer Syndrome (HBOC) from the NCBI.
+- Download raw data from the NCBI.
 - Preparation GRCh38 reference genome
 - Analysis nf-core/sarek pipeline to detect germline variants with the GRCh38 linear reference genome
 - Preprocess VCFs and create consensus sequences
