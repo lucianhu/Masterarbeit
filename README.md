@@ -13,5 +13,13 @@ Mannheim, February 2024
 
 This repository contains scripts used to reproduce our work
 
-# Workflow Description:
-The scripts are designed to be run in the order listed below.
+# Workflow Description
+The scripts are designed to be run in the order listed below:
+- Download raw data associated with Hereditary Breast and Ovarian Cancer Syndrome from the NCBI.
+- Preparation GRCh38 reference genome
+- Analysis nf-core/sarek pipeline to detect germline variants with the GRCh38 linear reference genome
+- Preprocess VCFs and create consensus sequences
+- Building WES pangenome graphs using nf-core/pangenome
+- Up/Downstream pangenome WDL
+
+*Concise explanations of each command's purpose are embedded in comments throughout the script.*
