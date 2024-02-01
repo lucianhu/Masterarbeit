@@ -5,4 +5,4 @@ intervals: '/path/to/sorted_GRCh38-exome-interval.bed'
 tools: 'deepvariant,snpeff'
 trim_fastq: true
 genome: 'GATK.GRCh38'
-igenomes_base: 'path/to/Homo_sapiens/GATK/GRCh38'
+igenomes_base: 'path/to/local_GRCh38-igenomes'
