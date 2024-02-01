@@ -40,3 +40,5 @@ curl -fsSL https://ewels.github.io/AWS-iGenomes/aws-igenomes.sh > aws-igenomes.s
 # Download aws-igenomes GATK_GRCh38
 bash aws-igenomes.sh -g Homo_sapiens -s GATK -b GRCh38 -o "path/to/local_GRCh38-igenomes" -q
 ```
+![img](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/Figures/Linear_pipeline.png)
+Figure 2: Pipeline for WES germline small-variants analysis in the linear reference genome.
