@@ -1,12 +1,12 @@
 ---
 title: "ALLELE STATISTICS"
-subtitle: "Sample SRR7890850"
+subtitle: "SAMPLE NAME"
 output:
   html_document:
     df_print: paged
     self_contained: no
     toc: true
-date: "2024-09-01"
+date: "yyyy-mm-dd"
 ---
 
 ```{r setup, include=FALSE}
@@ -283,7 +283,7 @@ process_multiple_homozygous_vcfs <- function(vcf_files) {
 
 ```{r}
 # Specify the folder containing VCF files
-vcf_folder <- "/home/lucianhu/Pangenome/tumors/SRR7890850/VCFs"
+vcf_folder <- "path/to/VCFs"
 
 # List all VCF files in the folder
 vcf_files <- list.files(path = vcf_folder, pattern = "*.vcf.gz", full.names = TRUE)
@@ -304,7 +304,7 @@ heterozygous_filtered_POS <- heterozygous_counts_table %>%
   ungroup()
 
 ## Save data frame to a Excel file
-write.csv(heterozygous_filtered_POS, "/home/lucianhu/Pangenome/tumors/SRR7890850/VCFs/SRR7890850.heterozygous_counts_table.csv")
+write.csv(heterozygous_filtered_POS, "path/to/heterozygous_counts_table.csv")
 ```
 
 ### 2.1.1 Sequencing Coverage
@@ -328,7 +328,7 @@ ggplot(data_long, aes(x = Fraction_Reference_allele_reads, y = `Read_depths`, fi
     title = "High coverage in Pangenome sequencing for SNPs/Indels to lengths ±10",
     x = "Allelic Balance",
     y = "Number of Reads ( Reference allele reads + Alternate allele reads )",
-    subtitle = "Analysis of Heterozygous Alleles in WES of DEE Using DeepVariant"
+    subtitle = "Analysis of Heterozygous Alleles in WES"
   ) +
   scale_fill_manual(values = c("#21a4a2","#E75480")) +  # Set fill colors for samples
   scale_x_continuous(limits = c(0, 1)) +
@@ -365,7 +365,7 @@ ggplot(data_long, aes(Alleles, Number_of_Reads, fill = Alleles)) +
     title = "Reference and Alternate Alleles Reads in Pathogenic SNPs/Indels to lengths ±10",
     x = "Alleles",
     y = "Number of Reads",  # Update the y-axis label back to its original form without log scale
-    subtitle = "Analysis of Heterozygous Alleles in WES of DEE Using DeepVariant"
+    subtitle = "Analysis of Heterozygous Alleles"
   ) +
   facet_grid(. ~ Samples) +
   ylim(0, 210) +
@@ -394,7 +394,7 @@ ggplot(heterozygous_filtered_POS, aes(x = Fraction_Reference_allele_reads, color
     title = "Mapping Bias for Pathogenic SNPs/Indels to lengths ±10",
     x = "Fraction of Reference alleles",
     y = "Probability density ",
-    subtitle = "Analysis of Heterozygous Alleles in WES of DEE Using DeepVariant"
+    subtitle = "Analysis of Heterozygous Alleles"
   ) +
   scale_x_continuous(limits = c(0.1, 0.9), breaks = seq(0.1, 0.9, by = 0.1)) +
   geom_vline(xintercept = 0.45, linetype = "dashed", color = "black", size = 0.5) +
@@ -455,7 +455,7 @@ ggplot(heterozygous_filtered_POS_long_data, aes(x = as.factor(POS), y = Number_o
     x = "Positions",
     y = "Number of Reads",
     fill = "Alleles",
-    subtitle = "Analysis of Heterozygous Alleles in WES of DEE Using DeepVariant"
+    subtitle = "Analysis of Heterozygous Alleles"
   ) +
   scale_fill_manual(
     values = c("Total_Reference_allele_reads" = "#007dff", "Total_Alternate_allele_reads" = "#ED820E"),
@@ -505,7 +505,7 @@ ggplot(heterozygous_filtered_POS_long_data, aes(x = as.factor(POS), y = Number_o
     x = "Positions",
     y = "Number of Reads",
     fill = "Alleles",
-    subtitle = "Analysis of Heterozygous Alleles in WES of DEE Using DeepVariant"
+    subtitle = "Analysis of Heterozygous Alleles"
   ) +
   scale_fill_manual(
     values = c("Total_Reference_allele_reads" = "#007dff", "Total_Alternate_allele_reads" = "#ED820E"),
@@ -557,7 +557,7 @@ ggplot(data_long, aes(x = Alleles, y = Number_of_Reads, fill = Samples)) +
     title = "Alternate Alleles Reads in Pathogenic SNPs/Indels to lengths ±10",
     x = "Alleles",
     y = "Number of Reads",
-    subtitle = "Analysis of Homozygous Alleles in WES of DEE Using DeepVariant"
+    subtitle = "Analysis of Homozygous Alleles in WES"
   ) +
   scale_fill_manual(values = c("#21a4a2","#E75480")) + 
   facet_grid(. ~ Samples) +
@@ -596,7 +596,7 @@ ggplot(data_long, aes(x = POS, y = Number_of_Reads, fill = Samples)) +
     x = "Positions",
     y = "Number of Reads",
     fill = "Samples",
-    subtitle = "Analysis of Homozygous Alleles in WES of DEE Using DeepVariant"
+    subtitle = "Analysis of Homozygous Alleles in WES"
   ) +
   coord_cartesian(ylim = c(10, 210), expand = TRUE) +
   geom_hline(yintercept = 40, linetype = "dashed", color = "black", size = 0.4) +  # Add y-line at y = 40
