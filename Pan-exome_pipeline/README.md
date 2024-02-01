@@ -27,3 +27,6 @@ Execute the following command:
 ```bash
 /usr/bin/time -v java -jar cromwell-86.jar run "path/to/up-downstream_pangenome.wdl" -i "SAMPLE_NAME_inputs.json" -o "options.json" 2>&1 | tee "SAMPLE_NAME.log"
 ```
+
+![img](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/Figures/Pan_pipeline.png)
+Figure 3: Pipeline for WES germline small-variants analysis in the pan-exome.
