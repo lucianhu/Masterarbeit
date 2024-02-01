@@ -1,8 +1,0 @@
-patient,sample,lane,fastq_1,fastq_2
-HG001,HG001_ERR1905890,1,/mnt/sda/Masterarbeit/raw_data/HG001_WES_ERR1905890_1.fastq.gz,/mnt/sda/Masterarbeit/raw_data/HG001_WES_ERR1905890_2.fastq.gz
-HG002,HG002_SRR2962669,1,/mnt/sda/Masterarbeit/raw_data/HG002_WES_SRR2962669_1.fastq.gz,/mnt/sda/Masterarbeit/raw_data/HG002_WES_SRR2962669_2.fastq.gz
-HG003,HG003_SRR2962692,1,/mnt/sda/Masterarbeit/raw_data/HG003_WES_SRR2962692_1.fastq.gz,/mnt/sda/Masterarbeit/raw_data/HG003_WES_SRR2962692_2.fastq.gz
-HG004,HG004_SRR2962694,1,/mnt/sda/Masterarbeit/raw_data/HG004_WES_SRR2962694_1.fastq.gz,/mnt/sda/Masterarbeit/raw_data/HG004_WES_SRR2962694_2.fastq.gz
-HG005,HG005_SRR2962693,1,/mnt/sda/Masterarbeit/raw_data/HG005_WES_SRR2962693_1.fastq.gz,/mnt/sda/Masterarbeit/raw_data/HG005_WES_SRR2962693_2.fastq.gz
-HG006,HG006_SRR14724507,1,/mnt/sda/Masterarbeit/raw_data/HG006_WES_SRR14724507_1.fastq.gz,/mnt/sda/Masterarbeit/raw_data/HG006_WES_SRR14724507_2.fastq.gz
-HG007,HG007_SRR14724506,1,/mnt/sda/Masterarbeit/raw_data/HG007_WES_SRR14724506_1.fastq.gz,/mnt/sda/Masterarbeit/raw_data/HG007_WES_SRR14724506_2.fastq.gz
