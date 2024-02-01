@@ -1,13 +1,10 @@
 ## Step 4
 
-## Preprocess VCFs and create consensus sequences
+# Preprocess VCFs and create consensus sequences
 
-### Purpose
-The provided Bash scripts serve the purpose of merging variants from different tools into a single VCF file and creating FASTA inputs for a Pangenome pipeline. Additionally, there's a script to create FASTA sequences directly from a human reference genome for the Pangenome pipeline.
+## Script 1: Preprocess VCFs and Create FASTA Sequences
 
-## Script 1: Merge Variants and Create FASTA Sequences
-
-This script merges variants from different tools into a single VCF file and generates FASTA sequences for downstream Pangenome analysis. It processes input data specified in a CSV file containing a list of patient names.
+This script filters and phases variants, producing consensus sequences for constructing a pan-exome. It operates on input data provided in a CSV file containing a list of sample names. The generated FASTA files must adhere to the PanSN specification.
 
 ### Prerequisites
 
@@ -25,7 +22,7 @@ bash Preprocess_VCFs_and_create _consensus _sequences/2.execute_create_FASTA_sam
 ```
 
 ## Script 2: Create FASTA from Reference Genome
-This script creates FASTA inputs for a Pangenome pipeline directly from a human reference genome.
+This script creates a reference exome-FASTA input for constructing a pan-exome directly from a human reference genome. The FASTA file must conform to the PanSN specification. 
 
 ### Prerequisites
 - Paths to the reference genome ("GRCh38.exome.fa") and interval BED file ("sorted_GRCh38-exome-interval.bed") are correctly set.
