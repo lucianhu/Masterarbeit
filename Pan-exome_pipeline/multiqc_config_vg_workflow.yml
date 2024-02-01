@@ -1,0 +1,37 @@
+title: " UP/DOWNSTREAM PANGENOME WDL workflow: Pipeline for germline small-variant analysis in the pangenome."
+
+report_comment: >
+  This report was generated using the <a href="https://github.com/vgteam/vg_wdl" target="_blank">vg_wdl</a> analysis pipeline, 
+  which draws upon the research conducted by Liao, WW., Asri, M., Ebler, J. et al. A draft human pangenome reference. Nature 617, 312–324 (2023). 
+  <a href="https://doi.org/10.1038/s41586-023-05896-x" target="_blank">doi:10.1038/s41586-023-05896-x</a>. Substantial modifications have been made to the pipeline, 
+  including the integration of tools for variant calling, annotation, and reporting. These enhancements aim to improve the effectiveness and efficiency of the pipeline to better meet our specific research requirements.
+
+export_plots: true
+
+# Run only these modules
+run_modules:
+  - fastqc
+  - fastp
+  - samtools
+  - bcftools
+  - vcftools
+  - snpeff
+
+module_order:
+  - fastqc:
+      name: "FastQC (Raw)"
+      path_filters_exclude:
+        - "*_val_*.zip"
+  - fastp:
+      name: "FastP (Read preprocessing)"
+  - samtools:
+      name: "Samtools stats"
+  - bcftools:
+      name: "Bcftools"
+  - vcftools:
+      name: "Vcftools"
+  - snpeff:
+      name: "SnpEff & SnpSift"
+  
+sample_names_replace_regex: True
+
