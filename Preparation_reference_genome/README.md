@@ -16,8 +16,6 @@ Ensure the following dependencies are installed before running the script:
 - `gatk` (Genome Analysis Toolkit) for creating a sequence dictionary
 
 ### Usage
-
-Execute the script using the following command:
 ```bash
 bash Preparation_reference_genome/make_reference.sh
 ```
