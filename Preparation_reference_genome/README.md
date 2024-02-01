@@ -3,7 +3,7 @@
 
 The purpose of this script is to automate the processing of the human reference genome (GRCh38) for genomic analysis and alignment pipelines. It performs essential tasks such as downloading the genome files, preparing the reference genome, indexing, extracting introns, creating a masked genome, and generating a sequence dictionary.
 
-## Prerequisites
+### Prerequisites
 
 Ensure the following dependencies are installed before running the script:
 
@@ -14,7 +14,7 @@ Ensure the following dependencies are installed before running the script:
 - `bwa` for creating an index for alignment
 - `gatk` (Genome Analysis Toolkit) for creating a sequence dictionary
 
-## Usage
+### Usage
 
 Execute the script using the following command:
 
