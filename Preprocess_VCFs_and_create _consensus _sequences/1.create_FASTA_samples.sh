@@ -46,15 +46,13 @@ parallel -j 10 --halt soon,fail=1 '
     OUTPUT_FASTA_DIR='"$OUTPUT_FASTA_DIR"'; 
     IN="${OUTPUT_FASTA_DIR}/preprocess_VCFs/phasing/${SAMPLE_NAME}.no_dups.AC.AN.chr${i}.vcf.gz";
     bcftools view "${OUTPUT_FASTA_DIR}/preprocess_VCFs/${SAMPLE_NAME}.no_dups.AC.AN.vcf.gz" --regions "chr${i}" -o $IN -Oz && tabix -p vcf $IN;
-    MAP="//media/lucianhu/29478145-8054-4fe3-900a-af5bbccd1109/Masterarbeit/Homo_sapiens/phasing_reference_panel/genetic_maps.b38/chr${i}.b38.gmap.gz";
+    MAP="path/to/phasing_reference_panel/genetic_maps.b38/chr${i}.b38.gmap.gz";
     CUT=0.001;
     THREADS=4;
-    REFERENCE_PANEL="/media/lucianhu/29478145-8054-4fe3-900a-af5bbccd1109/Masterarbeit/Homo_sapiens/phasing_reference_panel/1kGP_high_coverage_Illumina.chr${i}.filtered.SNV_INDEL_SV_phased_panel.vcf.gz";
+    REFERENCE_PANEL="path/to/phasing_reference_panel/1kGP_high_coverage_Illumina.chr${i}.filtered.SNV_INDEL_SV_phased_panel.vcf.gz";
     OUT="${OUTPUT_FASTA_DIR}/preprocess_VCFs/phasing/${SAMPLE_NAME}.no_dups.AC.AN.chr${i}.phased.bcf";
     LOG="${OUTPUT_FASTA_DIR}/error/${SAMPLE_NAME}.chr${i}.phased.log";     
-    source activate shapeit;
     SHAPEIT5_phase_common --input $IN --reference $REFERENCE_PANEL --map $MAP --region chr${i} --filter-maf $CUT --output $OUT --thread $THREADS --log $LOG --progress && bcftools index -f $OUT --threads $THREADS;
-    conda activate;
     bcftools convert -Oz -o "${OUTPUT_FASTA_DIR}/preprocess_VCFs/phasing/${SAMPLE_NAME}.no_dups.AC.AN.chr${i}.phased.vcf.gz" $OUT;
     tabix -p vcf "${OUTPUT_FASTA_DIR}/preprocess_VCFs/phasing/${SAMPLE_NAME}.no_dups.AC.AN.chr${i}.phased.vcf.gz";
     rm -f $IN "${OUTPUT_FASTA_DIR}/preprocess_VCFs/phasing/${SAMPLE_NAME}.no_dups.AC.AN.chr${i}.vcf.gz.tbi" $OUT "${OUTPUT_FASTA_DIR}/preprocess_VCFs/phasing/${SAMPLE_NAME}.no_dups.AC.AN.chr${i}.phased.bcf.csi";
