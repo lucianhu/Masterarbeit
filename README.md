@@ -29,3 +29,4 @@ The scripts are designed to be run in the order listed below:
 
 ![img](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/Figures/workflow_overview.png)
 Figure 1: NGS data analysis workflow for constructing and analyzing pan-exome. Source: Luu PL, Do HD, 2023; Baaijens et al., 2022.
+
