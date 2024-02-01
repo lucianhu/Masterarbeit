@@ -10,6 +10,7 @@ Ensure the following prerequisites are met before executing the command:
 - ǹextflow` is installed on your system.
 - `docker` is installed and available for containerization.
 - The `nf-core/sarek` workflow (version 3.4.0) is accessible.
+- The necessary data files for the pangenome workflow are accessible (`nf-params_Linear.yaml`, `samplesheet.csv`).
 
 ### Usage
 ```bash
@@ -17,11 +18,11 @@ nextflow run nf-core/sarek -r 3.4.0 -profile docker -work-dir "path/to/work" -pa
 ```
 with params.yaml containing
 ```
-input: './samplesheet.csv'
-outdir: './results/'
+input: 'path/to/samplesheet.csv'
+outdir: 'path/to/results/'
 genome: 'GRCh38'
 ```
-and samplesheet.csv
+and samplesheet.csv includes principal metadata and absolute paths to FastQ files 
 ```
 patient,sample,lane,fastq_1,fastq_2
 patient1,test_sample,lane_1,test_1.fastq.gz,test_2.fastq.gz
