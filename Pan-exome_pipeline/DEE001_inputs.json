@@ -1,0 +1,25 @@
+{
+  "UP_DOWNSTREAM_PANGENOME.INPUT_READ_FILE_1": "/media/lucianhu/29478145-8054-4fe3-900a-af5bbccd1109/Masterarbeit/raw_data/DEE_patients/DEE001_WJ220217001_1.fastq.gz",  
+  "UP_DOWNSTREAM_PANGENOME.INPUT_READ_FILE_2": "/media/lucianhu/29478145-8054-4fe3-900a-af5bbccd1109/Masterarbeit/raw_data/DEE_patients/DEE001_WJ220217001_2.fastq.gz",
+  "UP_DOWNSTREAM_PANGENOME.GBZ_FILE": "/home/lucianhu/Pangenome/DEE/vg_giraffe/DEE.giraffe.gbz",
+  "UP_DOWNSTREAM_PANGENOME.DIST_FILE": "/home/lucianhu/Pangenome/DEE/vg_giraffe/DEE.dist",
+  "UP_DOWNSTREAM_PANGENOME.MIN_FILE": "/home/lucianhu/Pangenome/DEE/vg_giraffe/DEE.min",
+  "UP_DOWNSTREAM_PANGENOME.SAMPLE_NAME": "Pan_DEE001",
+  "UP_DOWNSTREAM_PANGENOME.PATH_LIST_FILE": "/home/lucianhu/Pangenome/DEE/vg_giraffe/DEE.reference_path.txt",
+  "UP_DOWNSTREAM_PANGENOME.REFERENCE_FILE": "/home/lucianhu/Pangenome/reference_sequences/REF.hg38.PanSN.fa",
+  "UP_DOWNSTREAM_PANGENOME.REFERENCE_INDEX_FILE": "/home/lucianhu/Pangenome/reference_sequences/REF.hg38.PanSN.fa.fai",
+  "UP_DOWNSTREAM_PANGENOME.REFERENCE_DICT_FILE": "/home/lucianhu/Pangenome/reference_sequences/REF.hg38.PanSN.dict",
+  "UP_DOWNSTREAM_PANGENOME.LIFTOVER_BAM": true,
+  "UP_DOWNSTREAM_PANGENOME.LIFTOVER_BAM_SCRIPT": "/home/lucianhu/Mastersarbeit/Pangenome/vg_wdl/fix_chrom_pos_bam.py",
+  "UP_DOWNSTREAM_PANGENOME.LIFTOVER_BAM_TARGET_REGION": "REF#chr:36378986-36379374",
+  "UP_DOWNSTREAM_PANGENOME.LIFTOVER_BAM_NEW_HEADER": "/home/lucianhu/Mastersarbeit/Pangenome/vg_wdl/HD_SQ_hg38_headers.tsv",
+  "UP_DOWNSTREAM_PANGENOME.LIFTOVER_VCF": true,
+  "UP_DOWNSTREAM_PANGENOME.LIFTOVER_VCF_SCRIPT": "/home/lucianhu/Mastersarbeit/Pangenome/vg_wdl/fix_chrom_pos_vcf.py",
+  "UP_DOWNSTREAM_PANGENOME.LIFTOVER_POSITION_REPORT": "/home/lucianhu/Mastersarbeit/Pangenome/vg_wdl/position_report.hg38.tsv",
+  "UP_DOWNSTREAM_PANGENOME.LIFTOVER_LINEAR_REFERENCE_INDEX": "/media/lucianhu/29478145-8054-4fe3-900a-af5bbccd1109/Masterarbeit/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/hg38.non-exome.fa.fai",
+  "UP_DOWNSTREAM_PANGENOME.SNPEFF_ANNOTATION_LOCAL": true,
+  "UP_DOWNSTREAM_PANGENOME.NAME_SNPEFF_DATABASE": "GRCh38.105",
+  "UP_DOWNSTREAM_PANGENOME.MULTIQC_CONFIG": "/home/lucianhu/Mastersarbeit/Pangenome/vg_wdl/multiqc_config_vg_workflow.yml",
+  "UP_DOWNSTREAM_PANGENOME.MAP_MEM": 60
+}
+
