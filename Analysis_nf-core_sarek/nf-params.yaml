@@ -1,0 +1,7 @@
+input: 'path/to/samplesheet.csv'
+outdir: 'path/to/outputs'
+wes: true
+intervals: '/path/to/sorted_GRCh38-exome-interval.bed'
+tools: 'deepvariant,snpeff'
+trim_fastq: true
+genome: 'GATK.GRCh38'
