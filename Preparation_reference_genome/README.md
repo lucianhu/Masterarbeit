@@ -1,4 +1,5 @@
 ## Step 2  
+
 # Preparation GRCh38 reference genome
 
 The purpose of this script is to automate the processing of the human reference genome (GRCh38) for genomic analysis and alignment pipelines. It performs essential tasks such as downloading the genome files, preparing the reference genome, indexing, extracting introns, creating a masked genome, and generating a sequence dictionary.
