@@ -1251,11 +1251,11 @@ task SNPEFF_ANNOTATE_VCF_LOCAL {
         set -euo pipefail
 
         # Set the path to the snpEff.jar and SnpSift.jar files on your local machine
-        snpEffJarPath="$HOME/snpEff/snpEff.jar"
-        snpSiftJarPath="$HOME/snpEff/SnpSift.jar"
+        snpEffJarPath="path/to/snpEff/snpEff.jar"
+        snpSiftJarPath="path/to/snpEff/SnpSift.jar"
         
         # Define the path to the ClinVar VCF file
-        clinvar="$HOME/snpEff/~{in_name_snpeff_database}/~{in_name_snpeff_database}.clinvar.vcf.gz"
+        clinvar="path/to/snpEff/~{in_name_snpeff_database}/~{in_name_snpeff_database}.clinvar.vcf.gz"
         
         # Run snpEff to annotate genetic variants
         java '-Xmx~{in_mem}G' -jar $snpEffJarPath ~{in_name_snpeff_database} ~{in_vcf_file} -csvStats ~{out_prefix}.stats.csv > ~{out_prefix}.ann.vcf
