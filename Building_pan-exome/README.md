@@ -16,7 +16,7 @@ The purpose of the provided commands is as follows:
 Before executing these commands, ensure the following prerequisites are met:
 - `ǹextflow` is installed on your system.
 - `docker` is available for containerization.
-- The necessary data files for the pangenome workflow are accessible.
+- The necessary data files for the pangenome workflow are accessible (`nf-params-Pan.yaml`).
 - The `vg` tool (VariationGraph toolkit) is installed.
 
 # Usage
