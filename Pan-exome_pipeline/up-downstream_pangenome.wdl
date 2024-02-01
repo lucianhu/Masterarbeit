@@ -1,6 +1,6 @@
 version 1.0
 
-import "/home/lucianhu/Mastersarbeit/Pangenome/vg_wdl/biotask_utils.wdl" as utils
+import "path/to/biotask_utils.wdl" as utils
 
 workflow UP_DOWNSTREAM_PANGENOME {
 
@@ -41,6 +41,10 @@ workflow UP_DOWNSTREAM_PANGENOME {
         DV_KEEP_LEGACY_AC: "Should DV use the legacy allele counter behavior? Default is 'true'."
         DV_NORM_READS: "Should DV normalize reads itself? Default is 'fasle'."
         OTHER_MAKEEXAMPLES_ARG: "Additional arguments for the make_examples step of DeepVariant."
+	LIFTOVER_BAM: "When dealing with a pangenome that has different chromosome names compared to the standard linear reference genome, converts genomic BAM data between reference assemblies. Default is 'false'."
+        LIFTOVER_BAM_SCRIPT: "A script converts VCF Ffiles between different genome builds. Required if using LIFTOVER_BAM."
+        LIFTOVER_BAM_TARGET_REGION: "Liftover BAM file is solely for IGV visualization, and this process is time-consuming. Therefore, you should extract the specified target regions.Required if using LIFTOVER_BAM."
+        LIFTOVER_BAM_NEW_HEADER: "Pangenome BAM header differs, submit linear pipeline's header. Required if using LIFTOVER_BAM."
         LIFTOVER_VCF: "When dealing with a pangenome that has different chromosome names compared to the standard linear reference genome, converts genomic VCF data between reference assemblies. Default is 'false'."
         LIFTOVER_VCF_SCRIPT: "A script converts VCF Ffiles between different genome builds. Required if using LIFTOVER_VCF."
         LIFTOVER_POSITION_REPORT: "A TSV file that records the ordinal positions of the standard linear reference genome. Required if using LIFTOVER_VCF." 
