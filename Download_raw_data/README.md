@@ -11,7 +11,6 @@ Developmental and Epileptic Encephalopathies Syndrome (DEE) data, directly provi
 - Check if the paired-end FASTQ files have the expected number of reads.
 
 ### Prerequisites:
-Ensure the following dependencies are installed before running the script:
 - Install prefetch and fasterq-dump tools.
 - Set the correct paths for the CSV_FILE and OUTPUT_DIR variables. 
 CSV formatted for nf-core/sarek sample sheet usage.
