@@ -26,6 +26,10 @@ and samplesheet.csv
 patient,sample,lane,fastq_1,fastq_2
 patient1,test_sample,lane_1,test_1.fastq.gz,test_2.fastq.gz
 ```
+Our `params.yaml` configuration is accessible in [Linear_pipeline/nf-params_Linear.yaml](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/Linear_pipeline/nf-params_Linear.yaml), while our samplesheet is located at [main/samplesheet_*.csv](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/samplesheet_DEE.csv). 
+
+For any additional information, particularly concerning parameters related to the pipeline, please feel free to contact the [nf-core/sarek Team](https://nf-co.re/sarek/3.4.0/parameters#snpeff_cache).
+
 # Note
 The nf-core/sarek pipeline is optimized for AWS cloud infrastructure with iGenomes references. Local execution may encounter performance challenges; therefore, it is essential to download and locally store iGenomes references. Ensure that the link in your param.yaml is updated accordingly. This not only enhances performance but also allows for flexibility in selecting a different target reference genome, as illustrated in our case, where we can switch to `GRCh38.exome.fa`
 ```bash
