@@ -21,7 +21,7 @@ The scripts are designed to be run in the order listed below:
 - Preparation GRCh38 reference genome
 - Analysis nf-core/sarek pipeline to detect germline variants with the GRCh38 linear reference genome
 - Preprocess VCFs and create consensus sequences
-- Building exome pan-exome graphs using nf-core/pangenome
+- Building pan-exome using nf-core/pangenome
 - Up/Downstream pangenome WDL
 - Quantification and statistical analysis
 
