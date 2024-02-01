@@ -1,4 +1,5 @@
 #!/bin/env bash
+# Download SRA sequences 
 
 # Set the path to the destination folder
 CSV_FILE="path/to/samplesheet_.csv"
