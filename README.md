@@ -17,12 +17,12 @@ This repository contains scripts used to reproduce our work.
 
 # Workflow Description
 The scripts are designed to be run in the order listed below:
-- Download raw data from the NCBI
-- Preparation GRCh38 reference genome
-- Analysis nf-core/sarek pipeline to detect germline variants with the GRCh38 linear reference genome
-- Preprocess VCFs and create consensus sequences
-- Building pan-exome using nf-core/pangenome
-- Up/Downstream pangenome WDL
-- Quantification and statistical analysis
+- [Download raw data from the NCBI](https://github.com/LuciaNhuNguyen/Masterarbeit/tree/main/Download_raw_data)
+- [Preparation GRCh38 reference genome] (https://github.com/LuciaNhuNguyen/Masterarbeit/tree/main/Preparation_reference_genome)
+- [Analysis nf-core/sarek pipeline to detect germline variants with the GRCh38 linear reference genome] (https://github.com/LuciaNhuNguyen/Masterarbeit/tree/main/Linear_pipeline)
+- [Preprocess VCFs and create consensus sequences] (https://github.com/LuciaNhuNguyen/Masterarbeit/tree/main/Preprocess_VCFs_and_create%20_consensus%20_sequences)
+- [Building pan-exome using nf-core/pangenome] (https://github.com/LuciaNhuNguyen/Masterarbeit/tree/main/Building_pan-exome)
+- [Up/Downstream pangenome WDL](https://github.com/LuciaNhuNguyen/Masterarbeit/tree/main/Pan-exome_pipeline)
+- [Quantification and statistical analysis](https://github.com/LuciaNhuNguyen/Masterarbeit/tree/main/Statistics)
 
 *Concise explanations of each command's purpose are embedded in comments throughout the script.*
