@@ -1,0 +1,3 @@
+input: '/home/lucianhu/Pangenome/DEE/a_general_fasta_for_pangenome/DEE.fa.gz'
+n_haplotypes: 9
+outdir: '/home/lucianhu/Pangenome/DEE/nf-core_pangenome/output'
