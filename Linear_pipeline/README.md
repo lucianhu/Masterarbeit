@@ -7,9 +7,9 @@ The purpose of this command is to run the `nf-core/sarek` workflow using specifi
 
 Ensure the following prerequisites are met before executing the command:
 
-- Nextflow is installed on your system.
-- Docker is installed and available for containerization.
-- The nf-core/sarek workflow (version 3.4.0) is accessible.
+- ǹextflow` is installed on your system.
+- `docker` is installed and available for containerization.
+- The `nf-core/sarek` workflow (version 3.4.0) is accessible.
 
 ### Usage
 ```bash
