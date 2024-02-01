@@ -1,0 +1,609 @@
+---
+title: "ALLELE STATISTICS"
+subtitle: "Sample SRR7890850"
+output:
+  html_document:
+    df_print: paged
+    self_contained: no
+    toc: true
+date: "2024-09-01"
+---
+
+```{r setup, include=FALSE}
+# Display R code along with its output in the generated report.
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load libraries
+
+```{r}
+library(tidyverse)
+library(ggpubr)
+library(conflicted) # install.packages('conflicted') if it is not currently available
+library(vcfR) # install.packages('vcfR') if it is not currently available
+conflicts_prefer(dplyr::filter)
+options(dplyr.summarise.inform = FALSE)
+library(writexl) # install.packages('writexl') if it is not currently available
+```
+
+# 1. **FUNCTIONS**
+
+## 1.1 For Heterozygous Alleles
+
+Define the function to process a single VCF file.
+
+```{r}
+allele_heterozygous_count <- function(vcf_file) {
+  # Load the VCF file
+  vcf <- read.vcfR(vcf_file)
+  
+  # Extract genotypes
+  gt <- extract.gt(vcf)
+  
+  # Query genotypes for heterozygotes
+  hets <- is_het(gt)
+  
+  # Filter non-heterozygous positions
+  vcf@gt[,-1][!hets] <- NA
+  
+  # Convert VCF to a 'tibble'
+  tibble_vcf <- vcfR2tidy(vcf, format_fields = c("GT", "DP", "AD"))
+  
+  # Create a new column 'POSITIONS' by concatenating CHROM and POS
+  tibble_vcf_fix <- tibble_vcf$fix %>%
+    mutate(POSITIONS = paste(CHROM, "_", POS, sep = ""))
+  
+  # Combine fix and gt columns
+  combined_df <- bind_cols(tibble_vcf_fix, tibble_vcf$gt)
+  
+  # Remove rows with NA values in GT
+  filtered_df <- combined_df %>%
+    filter(!is.na(gt_GT))
+  
+  # Select specific columns
+  selected_columns <- filtered_df %>%
+    select(POSITIONS, Indiv, gt_GT, gt_DP, gt_AD, REF, ALT)
+  
+  # # Split AD into reference and alternate allele values
+  split_AD <- strsplit(selected_columns$gt_AD, ",")
+  reference_AD <- sapply(split_AD, function(x) as.numeric(x[1]))
+  alternate_AD <- sapply(split_AD, function(x) as.numeric(x[2]))
+  
+  # Calculate allele frequency
+  calculate_counts <- function(POS, Sample, genotype, gt_DP, REF, ALT, reference_AD, alternate_AD) {
+    # Initialize variables
+    Total_Reference_allele_reads <- NA
+    Total_Alternate_allele_reads <- NA
+    Read_depths <- NA
+    Fraction_Reference_allele_reads <- NA
+    Indel_len <- NA
+    
+    # Check conditions and calculate values
+    if (!is.na(gt_DP) && reference_AD != 0 && alternate_AD != 0) {
+      if (genotype %in% c("0/1", "1/0")) {
+        if (genotype == "0/1") {
+          Total_Reference_allele_reads <- reference_AD
+          Total_Alternate_allele_reads <- alternate_AD
+        } else {
+          Total_Reference_allele_reads <- alternate_AD
+          Total_Alternate_allele_reads <- reference_AD
+        }
+        
+        Read_depths <- Total_Reference_allele_reads + Total_Alternate_allele_reads
+        
+        Fraction_Reference_allele_reads <- round(Total_Reference_allele_reads / Read_depths, 3)
+        
+        Indel_len <- nchar(ALT) - nchar(REF)
+        
+        # Limit the value of Indel_len to INDEL_SIZE_LIMIT
+        INDEL_SIZE_LIMIT <- 40
+        Indel_len <- pmin(pmax(Indel_len, -INDEL_SIZE_LIMIT), INDEL_SIZE_LIMIT)
+      } else {
+        # Handle unexpected genotype values
+        warning("Unexpected genotype value")
+      }
+    } else {
+      # Handle NA values or zero allele reads
+      warning("Missing or zero allele read counts")
+    }
+    
+    return(data.frame(
+      POS = POS,
+      Samples = Sample,
+      Genotype = genotype,
+      Read_depths = Read_depths, 
+      Total_Reference_allele_reads = Total_Reference_allele_reads,
+      Total_Alternate_allele_reads = Total_Alternate_allele_reads,
+      Fraction_Reference_allele_reads = Fraction_Reference_allele_reads,
+      REF = REF,
+      ALT = ALT,
+      Indel_len = Indel_len
+    ))
+  }
+  
+  # Apply the "calculate_counts" function to data
+  counts_list <- mapply(calculate_counts, selected_columns$POSITIONS, selected_columns$Indiv, selected_columns$gt_GT, selected_columns$gt_DP, selected_columns$REF, selected_columns$ALT, reference_AD, alternate_AD,  SIMPLIFY = FALSE)
+  
+  # Create a data frame from the counts
+  counts_df <- do.call(rbind, counts_list)
+  
+  # Reset row names to NULL
+  rownames(counts_df) <- NULL
+  
+  # Filter rows based on specified conditions
+  filtered_counts_df <- counts_df %>%
+    filter(between(Indel_len, -10, 10) & between(Fraction_Reference_allele_reads, 0.1, 0.9))
+  
+  return(filtered_counts_df)
+}
+
+```
+
+Define a function to remove outliers.
+
+```{r}
+remove_outlier <- function(dataframe, columns = names(dataframe)) {
+  cleaned_dataframe <- dataframe
+  
+  for (col in columns) {
+    # Calculate the first quartile
+    Quantile1 <- quantile(cleaned_dataframe[[col]], probs = 0.25)
+  
+    # Calculate the third quartile
+    Quantile3 <- quantile(cleaned_dataframe[[col]], probs = 0.75)
+  
+    # Calculate the interquartile range
+    IQR <- Quantile3 - Quantile1
+  
+    # Define the lower and upper bounds
+    lower_bound <- Quantile1 - 1.5 * IQR
+    upper_bound <- Quantile3 + 1.5 * IQR
+  
+    # Remove observations outside the bounds for each column
+    cleaned_dataframe <- cleaned_dataframe[!(cleaned_dataframe[[col]] <= lower_bound | cleaned_dataframe[[col]] >= upper_bound), ]
+  }
+  
+  return(cleaned_dataframe)
+}
+```
+
+Define a function to process multiple VCF files and merge the results.
+
+```{r}
+# Define a function to process multiple VCF files and merge the results
+process_multiple_heterozygous_vcfs <- function(vcf_files) {
+  # Initialize an empty data frame to store the merged results
+  merged_results <- data.frame()
+  
+  # Process each VCF file and merge the results
+  for (vcf_file in vcf_files) {
+    counts_df <- allele_heterozygous_count(vcf_file)
+    remove_outlier_allele <- remove_outlier(counts_df, c("Total_Reference_allele_reads", "Total_Alternate_allele_reads" ))
+    merged_results <- bind_rows(merged_results, remove_outlier_allele)
+  }
+  
+  return(merged_results)
+}
+```
+
+## 1.2 For Homozygous Alleles
+
+```{r}
+# Define the "Allele_count" function to process a single VCF file
+allele_homozygous_count <- function(vcf_file) {
+  # Load the VCF file
+  vcf <- read.vcfR(vcf_file)
+  
+  # Extract elements from vcfR objects
+  gt <- extract.gt(vcf)
+  
+  # Convert VCF to a 'tibble.'
+  tibble_vcf <- vcfR2tidy(vcf, format_fields = c("GT", "DP", "AD"))
+  
+  # Create a new column 'POSITIONS' by concatenating CHROM and POS
+  tibble_vcf_fix <- tibble_vcf$fix %>%
+    mutate(POSITIONS = paste(CHROM, "_", POS, sep = ""))
+  
+  # Combine fix and gt columns
+  combined_df <- bind_cols(tibble_vcf_fix, tibble_vcf$gt)
+  
+  # Remove rows with NA values and extract homozygous "1/1" genotypes in gt_GT
+  filtered_df <- combined_df %>%
+    filter(!is.na(gt_GT) & gt_GT == "1/1")
+  
+  # Select specific columns
+  selected_columns <- filtered_df %>%
+    select(POSITIONS, Indiv, gt_GT, gt_DP, gt_AD, REF, ALT)
+  
+  # Split AD into reference and alternate allele values
+  split_AD <- strsplit(selected_columns$gt_AD, ",")
+  reference_AD <- sapply(split_AD, function(x) as.numeric(x[1]))
+  alternate_AD <- sapply(split_AD, function(x) as.numeric(x[2]))
+  
+  # Arrange information into a data frame
+  calculate_counts <- function(POS, Sample, genotype, gt_DP, REF, ALT, alternate_AD) {
+    # Initialize variables
+    Total_Alternate_allele_reads <- NA
+    Indel_len <- NA
+    
+    # Check conditions and calculate values
+    if (!is.na(gt_DP)) {
+      Total_Alternate_allele_reads <- alternate_AD
+      Indel_len <- nchar(ALT) - nchar(REF)
+      
+      # Limit the value of Indel_len to INDEL_SIZE_LIMIT
+      INDEL_SIZE_LIMIT <- 40
+      Indel_len <- pmin(pmax(Indel_len, -INDEL_SIZE_LIMIT), INDEL_SIZE_LIMIT)
+    }
+    
+    # Return calculated values as a data frame
+    return(data.frame(
+      POS = POS,
+      Samples = Sample,
+      Genotype = genotype,
+      Total_Alternate_allele_reads = Total_Alternate_allele_reads,
+      REF = REF,
+      ALT = ALT,
+      Indel_len = Indel_len
+    ))
+  }
+  
+  # Apply the "calculate_counts" function to data
+  counts_list <- mapply(calculate_counts, selected_columns$POSITIONS, selected_columns$Indiv, selected_columns$gt_GT, selected_columns$gt_DP, selected_columns$REF, selected_columns$ALT, alternate_AD, SIMPLIFY = FALSE)
+  
+  # Create a data frame from the counts
+  counts_df <- do.call(rbind, counts_list)
+  
+  # Reset row names to NULL
+  rownames(counts_df) <- NULL
+  
+  # Filter rows based on specified conditions
+  filtered_counts_df <- counts_df %>%
+    filter(between(Indel_len, -10, 10))
+  
+  return(filtered_counts_df)
+}
+
+# Define a function to process multiple VCF files and merge the results
+process_multiple_homozygous_vcfs <- function(vcf_files) {
+  # Initialize an empty data frame to store the merged results
+  merged_results <- data.frame()
+  
+  # Process each VCF file and merge the results
+  for (vcf_file in vcf_files) {
+    counts_df <- allele_homozygous_count(vcf_file)
+    merged_results <- bind_rows(merged_results, counts_df)
+  }
+  
+  return(merged_results)
+}
+```
+
+# 2. **MAIN SCRIPT**
+
+```{r}
+# Specify the folder containing VCF files
+vcf_folder <- "/home/lucianhu/Pangenome/tumors/SRR7890850/VCFs"
+
+# List all VCF files in the folder
+vcf_files <- list.files(path = vcf_folder, pattern = "*.vcf.gz", full.names = TRUE)
+vcf_files
+```
+
+## 2.1 For Heterozygous Alleles
+
+```{r}
+## Process and merge the VCF files
+heterozygous_counts_table <- process_multiple_heterozygous_vcfs(vcf_files)
+heterozygous_counts_table
+
+# Filter data based on the position ('POS' column)
+heterozygous_filtered_POS <- heterozygous_counts_table %>%
+  group_by(POS) %>%
+  filter(n_distinct(Samples) == 2) %>%
+  ungroup()
+
+## Save data frame to a Excel file
+write.csv(heterozygous_filtered_POS, "/home/lucianhu/Pangenome/tumors/SRR7890850/VCFs/SRR7890850.heterozygous_counts_table.csv")
+```
+
+### 2.1.1 Sequencing Coverage
+
+#### Generate a graph illustrating the coverage between linear and pangenome variants.
+
+```{r}
+# Reshape data from wide to long format
+data_long <- heterozygous_filtered_POS %>%
+  select(Samples, Read_depths, Fraction_Reference_allele_reads) %>%
+  pivot_longer(
+    cols = c(Read_depths),
+    names_to = "Allelic Balance",
+    values_to = "Read_depths"  # Updated variable name
+  )
+
+# Plotting histogram with the curve representing the median of Read_depths across samples
+ggplot(data_long, aes(x = Fraction_Reference_allele_reads, y = `Read_depths`, fill = Samples)) +
+  geom_histogram(stat = "identity", position = "dodge", width = 0.009) +
+  labs(
+    title = "High coverage in Pangenome sequencing for SNPs/Indels to lengths ±10",
+    x = "Allelic Balance",
+    y = "Number of Reads ( Reference allele reads + Alternate allele reads )",
+    subtitle = "Analysis of Heterozygous Alleles in WES of DEE Using DeepVariant"
+  ) +
+  scale_fill_manual(values = c("#21a4a2","#E75480")) +  # Set fill colors for samples
+  scale_x_continuous(limits = c(0, 1)) +
+  geom_vline(xintercept = 0.5, linetype = "dashed", color = "red") + # Add a vertical line at x = 0.5
+  theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 8), plot.title = element_text(size = 11),  plot.subtitle = element_text(size = 10)) +
+  theme_minimal()
+```
+
+#### Generate a graph illustrating the total reference and alternate alleles reads.
+
+```{r}
+# Reshape data from wide to long format
+data_long <- heterozygous_filtered_POS %>%
+  select(Samples, Total_Reference_allele_reads, Total_Alternate_allele_reads) %>%
+  pivot_longer(
+    cols = c(Total_Reference_allele_reads, Total_Alternate_allele_reads),
+    names_to = "Alleles",
+    values_to = "Number_of_Reads"
+  )
+data_long
+
+# Calculate the means
+means <- data_long %>%
+  group_by(Samples, Alleles) %>%
+  summarize(Mean = mean(Number_of_Reads))
+
+# Create plot using ggplot() and geom_boxplot function
+ggplot(data_long, aes(Alleles, Number_of_Reads, fill = Alleles)) + 
+  geom_boxplot(color = "black", alpha = 0.8, width = 0.5) +
+  scale_fill_manual(values = c("Total_Reference_allele_reads" = "#007dff", "Total_Alternate_allele_reads" = "#ED820E"), 
+                    labels = c("Total_Reference_allele_reads" = "Reference alleles", "Total_Alternate_allele_reads" = "Alternate alleles")) +
+  scale_x_discrete(labels = c("Total_Reference_allele_reads" = "Reference alleles", "Total_Alternate_allele_reads" = "Alternate alleles")) +
+  labs(
+    title = "Reference and Alternate Alleles Reads in Pathogenic SNPs/Indels to lengths ±10",
+    x = "Alleles",
+    y = "Number of Reads",  # Update the y-axis label back to its original form without log scale
+    subtitle = "Analysis of Heterozygous Alleles in WES of DEE Using DeepVariant"
+  ) +
+  facet_grid(. ~ Samples) +
+  ylim(0, 210) +
+  geom_text(data = means, aes(label = sprintf("Mean: %.3f", Mean), y = Inf, group = Alleles), vjust = 1, color = "black", size = 3.2, angle = 0, hjust = 0.5, family = "Arial", fontface = "bold") +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 8), plot.title = element_text(size = 11),  plot.subtitle = element_text(size = 10)) +
+  theme_minimal()
+```
+
+### 2.2 Mapping Bias
+
+#### Generate a graph illustrating the *Mapping Bias*.
+
+```{r}
+# Convert "Samples" to a factor for categorical data handling
+heterozygous_filtered_POS$Samples <- factor(heterozygous_filtered_POS$Samples)
+
+# Plot the probability density function (PDF)
+ggplot(heterozygous_filtered_POS, aes(x = Fraction_Reference_allele_reads, color = Samples)) +
+  geom_rect(
+    xmin = 0.45, xmax = 0.55,
+    ymin = -Inf, ymax = Inf,
+    fill = "lightgrey", alpha = 0.018, color = NA
+  ) +
+  geom_density(size = 0.8) +
+  labs(
+    title = "Mapping Bias for Pathogenic SNPs/Indels to lengths ±10",
+    x = "Fraction of Reference alleles",
+    y = "Probability density ",
+    subtitle = "Analysis of Heterozygous Alleles in WES of DEE Using DeepVariant"
+  ) +
+  scale_x_continuous(limits = c(0.1, 0.9), breaks = seq(0.1, 0.9, by = 0.1)) +
+  geom_vline(xintercept = 0.45, linetype = "dashed", color = "black", size = 0.5) +
+  geom_vline(xintercept = 0.55, linetype = "dashed", color = "black", size = 0.5) +
+  scale_color_manual(values = c("#21a4a2","#E75480")) + # Set line colors
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 1, size = 8),
+    plot.title = element_text(size = 11),
+    plot.subtitle = element_text(size = 10)
+  ) +
+  theme_minimal()
+
+# Calculate probabilities de rounded to three decimal places for each sample
+probabilities <- heterozygous_filtered_POS %>%
+  group_by(Samples) %>%
+  summarize(
+    Probability_less_than_0_45 = round(mean(Fraction_Reference_allele_reads < 0.45), 3),
+    probability_in_range_0_45_0_55 = round(mean(Fraction_Reference_allele_reads >= 0.45 & Fraction_Reference_allele_reads <= 0.55), 3),
+    Probability_greater_than_0_6 = round(mean(Fraction_Reference_allele_reads > 0.55), 3)
+  )
+
+# Display the calculated rounded probabilities for each sample
+print(probabilities)
+```
+
+#### Generate a graph illustrating the *Reference Bias* at consistent positions in both linear and pangenome variants.
+
+```{r}
+# Filter data based on Samples and Fraction_Reference_allele_reads
+filtered_data_reference_bias <- heterozygous_counts_table %>%
+  filter((grepl("^Linear_", Samples) & Fraction_Reference_allele_reads > 0.55) | grepl("^Pan_", Samples))
+
+# Filter data based on the position ('POS' column)
+heterozygous_filtered_POS <- filtered_data_reference_bias %>%
+  group_by(POS) %>%
+  filter(n_distinct(Samples) == 2) %>%
+  ungroup()
+
+# Reshape data from wide to long format
+heterozygous_filtered_POS_long_data <- heterozygous_filtered_POS %>%
+  select(Samples, Total_Reference_allele_reads, Total_Alternate_allele_reads, POS) %>%
+  pivot_longer(
+    cols = c(Total_Reference_allele_reads, Total_Alternate_allele_reads),
+    names_to = "Alleles",
+    values_to = "Number_of_Reads"
+  )
+
+# Reorder levels of POS based on the desired order (for example, by sorting)
+heterozygous_filtered_POS_long_data$POS <- factor(heterozygous_filtered_POS_long_data$POS, 
+                                                     levels = unique(heterozygous_filtered_POS_long_data$POS))
+
+# Create the stacked column plot
+ggplot(heterozygous_filtered_POS_long_data, aes(x = as.factor(POS), y = Number_of_Reads, fill = Alleles, label = Number_of_Reads)) +
+  geom_col(position = "stack", width = 0.7) +
+  geom_text(size = 3.3, vjust = 0.5, position = position_stack(vjust = 0.5)) +
+  labs(
+    title = "Reference Bias among Pathogenic Linear and Pangenome Variants at Identical Positions",
+    x = "Positions",
+    y = "Number of Reads",
+    fill = "Alleles",
+    subtitle = "Analysis of Heterozygous Alleles in WES of DEE Using DeepVariant"
+  ) +
+  scale_fill_manual(
+    values = c("Total_Reference_allele_reads" = "#007dff", "Total_Alternate_allele_reads" = "#ED820E"),
+    labels = c("Total_Reference_allele_reads" = "Reference alleles", "Total_Alternate_allele_reads" = "Alternate alleles")
+  ) +
+  facet_wrap(~Samples, ncol = 1, scales = "fixed") + # Set scales = "fixed" for consistent y-axis limits
+  ylim(0, 210) + # Set y-axis limits
+  geom_hline(yintercept = 40, linetype = "dashed", color = "black", size = 0.4) +  # Add y-line at y = 40
+  annotate("text", x = Inf, y = 40, label = "40", vjust = 1.5, hjust = 1, color = "black", fontface = "bold") +  # Bold label on the right
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8), plot.title = element_text(size = 11), plot.subtitle = element_text(size = 10))
+```
+
+#### Generate a graph illustrating the *Alternate Bias* at consistent positions in both linear and pangenome variants.
+
+```{r}
+# Filter data based on Samples and Fraction_Alternate_allele_reads
+filtered_data_alternate_bias <- heterozygous_counts_table %>%
+  filter((grepl("^Linear_", Samples) & Fraction_Reference_allele_reads < 0.45) | grepl("^Pan_", Samples))
+
+
+# Filter data based on the position ('POS' column)
+heterozygous_filtered_POS <- filtered_data_alternate_bias %>%
+  group_by(POS) %>%
+  filter(n_distinct(Samples) == 2) %>%
+  ungroup()
+
+# Reshape data from wide to long format
+heterozygous_filtered_POS_long_data <- heterozygous_filtered_POS %>%
+  select(Samples, Total_Reference_allele_reads, Total_Alternate_allele_reads, POS) %>%
+  pivot_longer(
+    cols = c(Total_Reference_allele_reads, Total_Alternate_allele_reads),
+    names_to = "Alleles",
+    values_to = "Number_of_Reads"
+  )
+
+# Reorder levels of POS based on the desired order (for example, by sorting)
+heterozygous_filtered_POS_long_data$POS <- factor(heterozygous_filtered_POS_long_data$POS, 
+                                                     levels = unique(heterozygous_filtered_POS_long_data$POS))
+
+# Create the stacked column plot
+ggplot(heterozygous_filtered_POS_long_data, aes(x = as.factor(POS), y = Number_of_Reads, fill = Alleles, label = Number_of_Reads)) +
+  geom_col(position = "stack", width = 0.7) +
+  geom_text(size = 3.3, vjust = 0.5, position = position_stack(vjust = 0.5)) +
+  labs(
+    title = "Alternate Bias among Pathogenic Linear and Pangenome Variants at Identical Positions",
+    x = "Positions",
+    y = "Number of Reads",
+    fill = "Alleles",
+    subtitle = "Analysis of Heterozygous Alleles in WES of DEE Using DeepVariant"
+  ) +
+  scale_fill_manual(
+    values = c("Total_Reference_allele_reads" = "#007dff", "Total_Alternate_allele_reads" = "#ED820E"),
+    labels = c("Total_Reference_allele_reads" = "Reference alleles", "Total_Alternate_allele_reads" = "Alternate alleles")
+  ) +
+  facet_wrap(~Samples, ncol = 1, scales = "fixed") + # Set scales = "fixed" for consistent y-axis limits
+  ylim(0, 210) + # Set y-axis limits
+  geom_hline(yintercept = 40, linetype = "dashed", color = "black", size = 0.4) +  # Add y-line at y = 40
+  annotate("text", x = Inf, y = 40, label = "40", vjust = 1.5, hjust = 1, color = "black", fontface = "bold") +  # Bold label on the right
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8), plot.title = element_text(size = 11), plot.subtitle = element_text(size = 10))
+```
+
+## 2.2 For Homozygous Alleles
+
+```{r}
+## Process and merge the VCF files
+homozygous_counts_table <- process_multiple_homozygous_vcfs(vcf_files)
+homozygous_counts_table
+
+## Filter data based on the position ('POS' column)
+homozygous_filtered_POS <- homozygous_counts_table %>%
+  group_by(POS) %>%                   # Group the data by the 'POS' column
+  filter(n_distinct(Samples) == 2) %>% # Retain rows with 'POS' appearing in both samples
+  ungroup()                           # Remove the grouping
+homozygous_filtered_POS
+```
+
+```{r}
+# Reshape data from wide to long format
+data_long <- homozygous_filtered_POS %>%
+  select(Samples, Total_Alternate_allele_reads) %>%
+  pivot_longer(
+    cols = c(Total_Alternate_allele_reads),
+    names_to = "Alleles",
+    values_to = "Number_of_Reads"
+  )
+data_long
+
+# Calculate the means
+means <- data_long %>%
+  group_by(Samples, Alleles) %>%
+  summarize(Mean = mean(Number_of_Reads))
+
+# Create the boxplot
+ggplot(data_long, aes(x = Alleles, y = Number_of_Reads, fill = Samples)) + 
+  geom_boxplot(color = "black", alpha = 0.8, width = 0.5) +
+  labs(
+    title = "Alternate Alleles Reads in Pathogenic SNPs/Indels to lengths ±10",
+    x = "Alleles",
+    y = "Number of Reads",
+    subtitle = "Analysis of Homozygous Alleles in WES of DEE Using DeepVariant"
+  ) +
+  scale_fill_manual(values = c("#21a4a2","#E75480")) + 
+  facet_grid(. ~ Samples) +
+  ylim(0, 210) +
+  geom_text(data = means, aes(label = sprintf("Mean: %.3f", Mean), y = Inf, group = Alleles), vjust = 1, color = "black", size = 3.2, angle = 0, hjust = 0.5, family = "Arial", fontface = "bold") +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 1, size = 8),
+    plot.title = element_text(size = 11),
+    plot.subtitle = element_text(size = 10)
+  ) +
+  theme_minimal()
+```
+
+### Generate a graph illustrating the total reads at consistent positions in both linear and pangenome variants.
+
+```{r}
+# Reshape data from wide to long format
+data_long <- homozygous_filtered_POS %>%
+  select(Samples, Total_Alternate_allele_reads, POS) %>%
+  pivot_longer(
+    cols = Total_Alternate_allele_reads,
+    names_to = "Alleles",
+    values_to = "Number_of_Reads"
+  )
+data_long
+
+# Reorder levels of POS based on the desired order (for example, by sorting)
+data_long$POS <- factor(data_long$POS, levels = unique(data_long$POS))
+
+# Create the bar plot
+ggplot(data_long, aes(x = POS, y = Number_of_Reads, fill = Samples)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.6) +  
+  geom_text(aes(label = Number_of_Reads), vjust = -0.5, size = 3, position = position_dodge(width = 0.8)) +  
+  labs(
+    title = "Alternate Alleles Reads among Pathogenic Linear and Pangenome Variants at Identical Positions",
+    x = "Positions",
+    y = "Number of Reads",
+    fill = "Samples",
+    subtitle = "Analysis of Homozygous Alleles in WES of DEE Using DeepVariant"
+  ) +
+  coord_cartesian(ylim = c(10, 210), expand = TRUE) +
+  geom_hline(yintercept = 40, linetype = "dashed", color = "black", size = 0.4) +  # Add y-line at y = 40
+  annotate("text", x = Inf, y = 40, label = "40", vjust = 1.5, hjust = 1, color = "black", fontface = "bold") +  # Bold label on the right
+  scale_fill_manual(values = c("#21a4a2","#E75480")) + # Set column colors
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        plot.title = element_text(size = 11),
+        plot.subtitle = element_text(size = 10))
+```
