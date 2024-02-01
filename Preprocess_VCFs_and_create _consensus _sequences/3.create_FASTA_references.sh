@@ -2,17 +2,17 @@
 # From a human reference genome, create FASTA inputs for a Pangenome pipeline
 
 # Set the path to the reference genome
-REFERENCE='/media/lucianhu/29478145-8054-4fe3-900a-af5bbccd1109/Masterarbeit/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/hg38.non-exome.fa'
+REFERENCE="path/to/GRCh38.exome.fa"
 
 # Set the path to the interval BED file
-INTERVAL_BED='/media/lucianhu/29478145-8054-4fe3-900a-af5bbccd1109/Masterarbeit/Homo_sapiens/GATK/GRCh38/Annotation/intervals/sorted_hg38-exome-interval-forcreateFASTA.bed'
+INTERVAL_BED="/path/to/sorted_GRCh38-exome-interval.bed"
 
 # Enable debugging and handle errors
 set -ex -o pipefail
 
 # Create necessary folders/files
-FASTA_DIR='/home/lucianhu/Pangenome/tumors/reference_sequences'
-ERROR="${FASTA_DIR}/errors/references_Pan.log"
+FASTA_DIR="path/to/reference_sequences"
+ERROR="${FASTA_DIR}/errors/references.log"
 mkdir -p "${FASTA_DIR}/errors"
 
 # Redirect both stdout and stderr to the log file
@@ -33,12 +33,12 @@ if [ ! -f "$INTERVAL_BED" ]; then
 fi
 
 # Extract target region
-bedtools getfasta -fi "$REFERENCE" -bed "$INTERVAL_BED" -fo "REF.hg38.fa"
+bedtools getfasta -fi "$REFERENCE" -bed "$INTERVAL_BED" -fo "REF.fa"
 
 # Concatenate the sequences from all of FASTA entries into a single continuous sequence
-awk '/^>/ {next} {printf("%s", $0)} END {printf("\n")}' "REF.hg38.fa" > "REF.hg38.PanSN.fa" && sed -i '1i>REF#chr' "REF.hg38.PanSN.fa"
+awk '/^>/ {next} {printf("%s", $0)} END {printf("\n")}' "REF.fa" > "REF.PanSN.fa" && sed -i '1i>REF#chr' "REF.PanSN.fa"
 
 # Compress a FASTA file
-bgzip -@ 16 "REF.hg38.PanSN.fa" && samtools faidx "REF.hg38.PanSN.fa.gz"
+bgzip -@ 16 "REF.PanSN.fa" && samtools faidx "REF.PanSN.fa.gz"
 
 echo "FASTA creation and indexing completed successfully."
