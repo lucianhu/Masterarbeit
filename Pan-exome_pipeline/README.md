@@ -10,7 +10,7 @@ The provided command initializes the execution of this workflow using cromwell. 
 
 For more detailed information, please refer to the `parameter_meta` section in the [Pan-exome_pipeline/up-downstream_pangenome.wdl](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/Pan-exome_pipeline/up-downstream_pangenome.wdl).
 
-# Prerequisites
+### Prerequisites
 
 Before executing the command, ensure the following prerequisites are met:
 - `cromwell`, specified by the `JAR` file `cromwell-86.jar` is installed.
@@ -20,7 +20,7 @@ Before executing the command, ensure the following prerequisites are met:
 
 For supplementary files supporting the WDL, please locate them in the [Pan-exome_pipeline](https://github.com/LuciaNhuNguyen/Masterarbeit/tree/main/Pan-exome_pipeline).  
 
-# Usage
+### Usage
 
 Execute the following command:
 
