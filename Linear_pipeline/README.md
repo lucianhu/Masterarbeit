@@ -26,7 +26,7 @@ and samplesheet.csv
 patient,sample,lane,fastq_1,fastq_2
 patient1,test_sample,lane_1,test_1.fastq.gz,test_2.fastq.gz
 ```
-Our `params.yaml` configuration is accessible in [Linear_pipeline/nf-params_Linear.yaml](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/Linear_pipeline/nf-params_Linear.yaml), while our samplesheet is located at [main/samplesheet_*.csv](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/samplesheet_DEE.csv). 
+Our `params.yaml` configuration is accessible in [Linear_pipeline/nf-params_Linear.yaml](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/Linear_pipeline/nf-params_Linear.yaml), while our samplesheets are located at [main/samplesheet_DEE.csv](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/samplesheet_DEE.csv) and [main/samplesheet_tumors.csv](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/samplesheet_tumors.csv). 
 
 For any additional information, particularly concerning parameters related to the pipeline, please feel free to contact the [nf-core/sarek Team](https://nf-co.re/sarek/3.4.0/parameters#snpeff_cache).
 
