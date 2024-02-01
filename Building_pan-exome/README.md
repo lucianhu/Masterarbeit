@@ -9,7 +9,7 @@ The purpose of the provided commands is as follows:
 - **Autoindexing with `vg autoindex`:**
   Generates an autoindexed representation of the pangenome using the Giraffe workflow, producing relevant output files.
 - **Extracting Paths with `vg paths`:**
-  Extracts GRCh38 reference paths from the generated pangenome, specifically the "REF" path, and saves the list in the file `Pan-exome.reference_path.txt`.
+  Extracts GRCh38 reference path from the generated pangenome, specifically the "REF" path, and saves the list in the file `Pan-exome.reference_path.txt`.
 
 # Prerequisites
 
