@@ -1,4 +1,4 @@
-## Step 1  
+## Step 2  
 # Preparation GRCh38 reference genome
 
 The purpose of this script is to automate the processing of the human reference genome (GRCh38) for genomic analysis and alignment pipelines. It performs essential tasks such as downloading the genome files, preparing the reference genome, indexing, extracting introns, creating a masked genome, and generating a sequence dictionary.
@@ -19,4 +19,5 @@ Ensure the following dependencies are installed before running the script:
 Execute the script using the following command:
 
 ```bash
-./process_human_reference.sh
+bash Preparation_reference_genome/1.make_reference.sh
+```
