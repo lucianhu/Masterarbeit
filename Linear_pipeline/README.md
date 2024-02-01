@@ -37,5 +37,5 @@ The nf-core/sarek pipeline is optimized for AWS cloud infrastructure with iGenom
 curl -fsSL https://ewels.github.io/AWS-iGenomes/aws-igenomes.sh > aws-igenomes.sh
 
 # Download aws-igenomes GATK_GRCh38
-bash aws-igenomes.sh -g Homo_sapiens -s GATK -b GRCh38 -o "path/to/Homo_sapiens/GATK/GRCh38" -q
+bash aws-igenomes.sh -g Homo_sapiens -s GATK -b GRCh38 -o "path/to/local_GRCh38-igenomes" -q
 ```
