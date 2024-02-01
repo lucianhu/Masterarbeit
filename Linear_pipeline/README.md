@@ -27,7 +27,7 @@ patient,sample,lane,fastq_1,fastq_2
 patient1,test_sample,lane_1,test_1.fastq.gz,test_2.fastq.gz
 ```
 # Note
-The nf-core/sarek pipeline is optimized for AWS cloud infrastructure with iGenomes references. Local execution may encounter performance challenges; therefore, it is essential to download and locally store iGenomes references. Ensure that the link in your param.yaml is updated accordingly. This not only enhances performance but also allows for flexibility in selecting a different target reference genome, as illustrated in our case, where we can switch to GRCh39.exome.fa.
+The nf-core/sarek pipeline is optimized for AWS cloud infrastructure with iGenomes references. Local execution may encounter performance challenges; therefore, it is essential to download and locally store iGenomes references. Ensure that the link in your param.yaml is updated accordingly. This not only enhances performance but also allows for flexibility in selecting a different target reference genome, as illustrated in our case, where we can switch to `GRCh38.exome.fa`
 ```bash
 # Install aws-igenomes 
 curl -fsSL https://ewels.github.io/AWS-iGenomes/aws-igenomes.sh > aws-igenomes.sh
