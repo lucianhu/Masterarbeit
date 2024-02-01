@@ -1,9 +1,12 @@
 ## Step 1  
+
 # SRA Sequences Download and Validation
+
 Hereditary Breast and Ovarian Cancer Syndrome (HBOC) genomic data were acquired from twelve human NCBI Sequence Read Archive (SRA). These scripts are designed to facilitate the download and validation of SRA sequences. 
 The process involves reading sample information from a provided CSV file, downloading corresponding SRA sequences, and then validating and renaming the obtained files.
 
 Developmental and Epileptic Encephalopathies Syndrome (DEE) data, directly provided by the hospital, does not require running this script.
+
 ### Purpose:
 - Download SRA sequences based on information in the provided CSV file.
 - Rename and compress the downloaded files.
