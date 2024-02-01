@@ -26,3 +26,6 @@ The scripts are designed to be run in the order listed below:
 - [Quantification and statistical analysis](https://github.com/LuciaNhuNguyen/Masterarbeit/tree/main/Statistics)
 
 *Concise explanations of each command's purpose are embedded in comments throughout the script.*
+
+![img](https://github.com/LuciaNhuNguyen/Masterarbeit/blob/main/Figures/general_workflow.png)
+Figure 1: NGS data analysis workflow for constructing and analyzing pan-exome. Source: Luu PL, Do HD, 2023; Baaijens et al., 2022.
