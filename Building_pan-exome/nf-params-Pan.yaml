@@ -1,0 +1,3 @@
+input: 'path/to/pan-exome_FASTA.fa.gz'
+n_haplotypes: 9
+outdir: "path/to/outputs"
