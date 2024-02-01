@@ -19,5 +19,5 @@ Ensure the following dependencies are installed before running the script:
 Execute the script using the following command:
 
 ```bash
-bash Preparation_reference_genome/1.make_reference.sh
+bash Preparation_reference_genome/make_reference.sh
 ```
